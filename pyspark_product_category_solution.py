@@ -1,42 +1,17 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-PySpark решение для задачи с продуктами и категориями
-Автор: Senior Python Developer
-Задача: Вернуть все пары "Имя продукта - Имя категории" и продукты без категорий
-
-Описание решения:
-- Используется LEFT JOIN для получения всех продуктов с их категориями
-- Продукты без категорий будут иметь NULL в поле категории
-- Результат содержит все требуемые пары плюс продукты без категорий
-"""
-
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 
 class ProductCategoryProcessor:
-    """
-    Класс для обработки связей между продуктами и категориями в PySpark
-    """
-    
     def __init__(self):
-        """Инициализация Spark сессии"""
         self.spark = SparkSession.builder \
             .appName("ProductCategoryProcessor") \
             .config("spark.sql.adaptive.enabled", "true") \
             .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \
             .getOrCreate()
     
-    def create_sample_data(self):
-        """
-        Создает образцы данных для демонстрации решения
-        
-        Возвращает:
-            tuple: (products_df, categories_df, product_categories_df)
-        """
-        
+    def create_sample_data(self):        
         # Схема для продуктов
         products_schema = StructType([
             StructField("product_id", IntegerType(), True),
@@ -89,19 +64,6 @@ class ProductCategoryProcessor:
         return products_df, categories_df, product_categories_df
     
     def get_products_with_categories(self, products_df, categories_df, product_categories_df):
-        """
-        ОСНОВНОЙ МЕТОД: Возвращает все пары "Имя продукта - Имя категории" 
-        и продукты без категорий в одном датафрейме
-        
-        Параметры:
-            products_df: DataFrame с продуктами (product_id, product_name)
-            categories_df: DataFrame с категориями (category_id, category_name) 
-            product_categories_df: DataFrame со связями (product_id, category_id)
-            
-        Возвращает:
-            DataFrame: со столбцами product_name, category_name (может быть NULL для продуктов без категорий)
-        """
-        
         # Шаг 1: LEFT JOIN продуктов со связями продукт-категория
         # Это гарантирует, что все продукты будут включены, даже без категорий
         products_with_relations = products_df.alias("p") \
@@ -127,7 +89,6 @@ class ProductCategoryProcessor:
         return result_df
     
     def display_results(self, result_df):
-        """Отображает результаты решения"""
         print("\n" + "=" * 50)
         print("РЕЗУЛЬТАТ: Все пары + продукты без категорий")
         print("=" * 50)
@@ -135,9 +96,6 @@ class ProductCategoryProcessor:
         print(f"Всего записей: {result_df.count()}")
     
     def run_demonstration(self):
-        """
-        Запускает демонстрацию решения с примерными данными
-        """
         print("Создание демонстрационных данных...")
         products_df, categories_df, product_categories_df = self.create_sample_data()
         
@@ -159,14 +117,10 @@ class ProductCategoryProcessor:
         return result_df
     
     def stop(self):
-        """Останавливает Spark сессию"""
         self.spark.stop()
 
 
 def main():
-    """
-    Главная функция для запуска решения
-    """
     processor = ProductCategoryProcessor()
     
     try:

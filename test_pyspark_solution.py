@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Тесты для PySpark решения задачи с продуктами и категориями
-"""
-
 import pytest
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
@@ -13,19 +7,13 @@ from pyspark_product_category_solution import ProductCategoryProcessor
 
 
 class TestProductCategoryProcessor:
-    """
-    Класс для тестирования ProductCategoryProcessor
-    """
-    
     @pytest.fixture(scope="class")
     def processor(self):
-        """Фикстура для создания экземпляра процессора"""
         processor = ProductCategoryProcessor()
         yield processor
         processor.stop()
     
     def test_create_sample_data(self, processor):
-        """Тест создания демонстрационных данных"""
         products_df, categories_df, product_categories_df = processor.create_sample_data()
         
         # Проверяем что DataFrame'ы не пустые
